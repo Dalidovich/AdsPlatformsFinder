@@ -50,7 +50,7 @@
 Газета уральских москвичей:/ru/msk,/ru/permobl,/ru/chelobl
 ```
 ### **Поиск данных (load)**
-Отправьте POST-запрос на `/api/AdsPlatforms/load` с параметром path, содержащим путь для поиска.  
+Отправьте Get-запрос на `/api/AdsPlatforms/load` с параметром path, содержащим путь для поиска.  
 Пример запроса:
 
 ```text
@@ -77,7 +77,7 @@
 **Запрос:**
 
 ```text
-POST /api/AdsPlatforms/load?path=/ru/svrd
+GET /api/AdsPlatforms/load?path=/ru/svrd
 ```
 **Ответ:**
 

@@ -47,7 +47,7 @@ namespace AdSpacesAPI.Controllers
             }
         }
 
-        [HttpPost("load")]
+        [HttpGet("load")]
         public async Task<IActionResult> loadAdsPlatforms(string path)
         {
             if (path == null || path.Length == 0)
