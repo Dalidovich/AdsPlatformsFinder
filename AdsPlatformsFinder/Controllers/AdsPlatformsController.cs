@@ -1,5 +1,6 @@
 using AdsPlatformsFinder.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace AdSpacesAPI.Controllers
 {
@@ -8,10 +9,12 @@ namespace AdSpacesAPI.Controllers
     public class AdsPlatformsController : ControllerBase
     {
         private readonly Node _root;
+        private readonly IMemoryCache _cache;
 
-        public AdsPlatformsController(Node root)
+        public AdsPlatformsController(Node root, IMemoryCache cache)
         {
             _root = root;
+            _cache = cache;
         }
 
         [HttpPost("upload")]
@@ -39,6 +42,7 @@ namespace AdSpacesAPI.Controllers
                     }
                 }
 
+                _cache.Remove("ads_platforms_*");
                 return Ok(_root);
             }
             catch (Exception ex)
@@ -58,8 +62,18 @@ namespace AdSpacesAPI.Controllers
             try
             {
                 var pathParts = path.Split("/").Where(x => x != "").ToList();
+                var cacheKey = $"ads_platforms_{string.Join("_", pathParts)}";
 
-                return Ok(_root.GetTitles(pathParts));
+                if (!_cache.TryGetValue(cacheKey, out List<string>? titles))
+                {
+                    titles = _root.GetTitles(pathParts);
+                    var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+                        .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+                    _cache.Set(cacheKey, titles, cacheEntryOptions);
+                }
+
+                return Ok(titles);
             }
             catch (Exception ex)
             {

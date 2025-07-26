@@ -12,6 +12,7 @@ namespace AdsPlatformsFinder
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMemoryCache();
             builder.Services.AddSingleton(new Node(true));
 
             var app = builder.Build();
